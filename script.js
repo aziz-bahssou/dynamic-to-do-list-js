@@ -3,8 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const taskInput = document.getElementById('task-input');
   const taskList = document.getElementById('task-list');
 
-  function addTask() {
-    const taskText = taskInput.value.trim();
+  let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+  function saveTasks() {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }
+
+  function addTask(taskText = null, save = true) {
+    if (taskText === null) {
+      taskText = taskInput.value.trim();
+    } else {
+      taskText = taskText.trim();
+    }
 
     if (taskText === "") {
       alert("Please enter a task.");
@@ -20,19 +30,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     removeButton.onclick = () => {
       taskList.removeChild(li);
+      tasks = tasks.filter(t => t !== taskText);
+      saveTasks();
     };
 
     li.appendChild(removeButton);
     taskList.appendChild(li);
 
+    if (save) {
+      tasks.push(taskText);
+      saveTasks();
+    }
+
     taskInput.value = "";
   }
 
-  addButton.addEventListener('click', addTask);
+  function loadTasks() {
+    tasks.forEach(task => addTask(task, false));
+  }
+
+  addButton.addEventListener('click', () => {
+    addTask();
+  });
 
   taskInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
       addTask();
     }
   });
+
+  loadTasks();
 });
