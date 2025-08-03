@@ -5,13 +5,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let tasks = JSON.parse(localStorage.getItem('tasks') || '[]');
 
-  function addTask(taskText, save = true) {
-    if (!taskText || taskText.trim() === '') {
+  function addTask(taskText = null, save = true) {
+    if (taskText === null) {
+      taskText = taskInput.value.trim();
+    } else {
+      taskText = taskText.trim();
+    }
+
+    if (taskText === "") {
       alert("Please enter a task.");
       return;
     }
-
-    taskText = taskText.trim();
 
     const li = document.createElement('li');
     li.textContent = taskText;
@@ -42,12 +46,12 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   addButton.addEventListener('click', () => {
-    addTask(taskInput.value);
+    addTask();
   });
 
   taskInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
-      addTask(taskInput.value);
+      addTask();
     }
   });
 
